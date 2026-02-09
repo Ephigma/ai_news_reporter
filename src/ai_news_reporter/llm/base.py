@@ -75,7 +75,7 @@ class BaseLLM(ABC):
 ### Article {i}: {article.title}
 - **Source**: {article.source}
 - **URL**: {article.url}
-{image_line}- **Published**: {article.published_at or 'Unknown'}
+{image_line}- **Published**: {article.published_at or "Unknown"}
 
 {article.content}
 """

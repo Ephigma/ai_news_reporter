@@ -1,6 +1,5 @@
 """Tests for image extraction and inclusion in reports."""
 
-import asyncio
 import pytest
 
 from ai_news_reporter.collectors.image_extractor import extract_og_image
@@ -117,8 +116,9 @@ class TestReportIncludesImages:
 
         # Every highlight article should have its image
         for i in range(5):
-            assert f"![Article {i}](https://example.com/image{i}.jpg)" in report, \
+            assert f"![Article {i}](https://example.com/image{i}.jpg)" in report, (
                 f"Image for Article {i} not found in report"
+            )
 
     def test_related_news_has_no_images(self):
         """Test that Related News section does not include images."""
@@ -137,8 +137,9 @@ class TestReportIncludesImages:
 
         # Related news (articles 10-14) should NOT have images
         for i in range(10, 15):
-            assert f"![Article {i}]" not in report, \
+            assert f"![Article {i}]" not in report, (
                 f"Image for Article {i} found in Related News (should not be there)"
+            )
 
 
 def _generate_report_section(articles: list[Article], highlight_count: int = 10) -> str:

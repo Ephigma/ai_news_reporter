@@ -126,9 +126,7 @@ async def run_report_async(settings: Settings, config: AppConfig) -> None:
                 formats=config.delivery.file_formats,
             )
             await file_delivery.deliver(report)
-            console.print(
-                f"[green]Report saved to {file_delivery.output_dir}[/green]"
-            )
+            console.print(f"[green]Report saved to {file_delivery.output_dir}[/green]")
             delivery_count += 1
         except AINewsReporterError as e:
             console.print(f"[red]File delivery failed: {e}[/red]")
@@ -179,8 +177,7 @@ def run(
     """Run news collection and report generation."""
     console.print(
         Panel.fit(
-            "[bold blue]AI News Reporter[/bold blue]\n"
-            "Collecting and summarizing AI news",
+            "[bold blue]AI News Reporter[/bold blue]\nCollecting and summarizing AI news",
             border_style="blue",
         )
     )
@@ -212,8 +209,7 @@ def schedule(
     """Start the scheduler daemon for automated reports."""
     console.print(
         Panel.fit(
-            "[bold blue]AI News Reporter Scheduler[/bold blue]\n"
-            "Running in daemon mode",
+            "[bold blue]AI News Reporter Scheduler[/bold blue]\nRunning in daemon mode",
             border_style="blue",
         )
     )

@@ -165,9 +165,7 @@ class WebScraper(BaseCollector):
 
         return articles
 
-    async def collect_from_sites(
-        self, sites: list[SiteConfig]
-    ) -> list[Article]:
+    async def collect_from_sites(self, sites: list[SiteConfig]) -> list[Article]:
         """Collect articles from multiple configured sites.
 
         Args:

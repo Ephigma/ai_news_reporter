@@ -103,7 +103,14 @@ class Summarizer:
         html = re.sub(r"^## (.+)$", r"<h2>\1</h2>", html, flags=re.MULTILINE)
         html = re.sub(r"^### (.+)$", r"<h3>\1</h3>", html, flags=re.MULTILINE)
 
-        # Convert images (must be before links) - handle URLs with special chars
+        # Convert thumbnail images (small, ~3 lines height) - must be before regular images
+        html = re.sub(
+            r"!\[thumb\|([^\]]*)\]\((https?://[^\s)]+)\)",
+            r'<img src="\2" alt="\1" style="max-height: 60px; width: auto; margin: 5px 0; border-radius: 4px;">',
+            html,
+        )
+
+        # Convert regular images (must be before links) - handle URLs with special chars
         html = re.sub(
             r"!\[([^\]]*)\]\((https?://[^\s)]+)\)",
             r'<img src="\2" alt="\1" style="max-width: 100%; height: auto; margin: 10px 0;">',

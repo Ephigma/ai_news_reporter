@@ -79,9 +79,7 @@ class TavilyCollector(BaseCollector):
 
             # Fetch og:image for each article in parallel
             if self._fetch_images and articles:
-                image_tasks = [
-                    extract_og_image(str(article.url)) for article in articles
-                ]
+                image_tasks = [extract_og_image(str(article.url)) for article in articles]
                 images = await asyncio.gather(*image_tasks, return_exceptions=True)
                 for article, image in zip(articles, images):
                     if isinstance(image, str):

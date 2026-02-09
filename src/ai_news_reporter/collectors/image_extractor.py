@@ -57,6 +57,5 @@ def _is_icon_or_logo(src: str) -> bool:
     """Check if image URL looks like an icon or logo."""
     src_lower = src.lower()
     return any(
-        x in src_lower
-        for x in ["icon", "logo", "avatar", "favicon", "sprite", "1x1", "pixel"]
+        x in src_lower for x in ["icon", "logo", "avatar", "favicon", "sprite", "1x1", "pixel"]
     )

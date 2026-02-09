@@ -76,9 +76,7 @@ class OpenAILLM(BaseLLM):
 
         context = self._format_articles_for_context(articles)
         focus_text = f"\nFOCUS: {focus}\n" if focus else ""
-        full_prompt = (prompt or DEFAULT_SUMMARY_PROMPT).format(
-            articles=context, focus=focus_text
-        )
+        full_prompt = (prompt or DEFAULT_SUMMARY_PROMPT).format(articles=context, focus=focus_text)
 
         try:
             response = self._client.chat.completions.create(
@@ -98,38 +96,42 @@ class OpenAILLM(BaseLLM):
 
         Keep only the first paragraph (2-3 sentences max).
         """
-        lines = summary.split('\n')
+        lines = summary.split("\n")
         cleaned_lines = []
         for line in lines:
             # Skip lines that are markdown headers
-            if re.match(r'^#{1,6}\s', line):
+            if re.match(r"^#{1,6}\s", line):
                 continue
             # Skip lines that are just "Executive Summary" or similar titles
-            if re.match(r'^\*{0,2}(Executive Summary|Key Developments|Industry Impact|Trends to Watch|Weekly.*Report)\*{0,2}\s*$', line, re.IGNORECASE):
+            if re.match(
+                r"^\*{0,2}(Executive Summary|Key Developments|Industry Impact|Trends to Watch|Weekly.*Report)\*{0,2}\s*$",
+                line,
+                re.IGNORECASE,
+            ):
                 continue
             # Skip image lines
-            if re.match(r'^!\[', line):
+            if re.match(r"^!\[", line):
                 continue
             # Skip numbered list items (1. **Title**: ...)
-            if re.match(r'^\d+\.\s+\*\*', line):
+            if re.match(r"^\d+\.\s+\*\*", line):
                 continue
             # Skip lines that are just source references
-            if re.match(r'^\*Source:', line):
+            if re.match(r"^\*Source:", line):
                 continue
             cleaned_lines.append(line)
 
         # Join and remove multiple consecutive blank lines
-        result = '\n'.join(cleaned_lines)
-        result = re.sub(r'\n{3,}', '\n\n', result)
+        result = "\n".join(cleaned_lines)
+        result = re.sub(r"\n{3,}", "\n\n", result)
         result = result.strip()
 
         # Keep only first paragraph (should be 2-3 sentences)
-        paragraphs = [p.strip() for p in result.split('\n\n') if p.strip()]
+        paragraphs = [p.strip() for p in result.split("\n\n") if p.strip()]
         if paragraphs:
             # Return only the first substantial paragraph, max 600 chars
             first = paragraphs[0]
             if len(first) > 600:
-                first = first[:600].rsplit('.', 1)[0] + '.'
+                first = first[:600].rsplit(".", 1)[0] + "."
             return first
         return result
 
@@ -186,22 +188,25 @@ class OpenAILLM(BaseLLM):
                 report += f" | *Published: {article.published_at.strftime('%Y-%m-%d')}*"
             report += "\n\n---\n\n"
 
-        # Related news (citations) without images
+        # Related news (citations) with small thumbnail images
         if related_articles:
             report += "## 3. Related News\n\n"
             for i, article in enumerate(related_articles, 1):
                 report += f"**3.{i}.** [{article.title}]({article.url})"
                 if article.published_at:
                     report += f" ({article.published_at.strftime('%Y-%m-%d')})"
+                report += "\n\n"
+                if article.image_url:
+                    report += f"![thumb|{article.title}]({article.image_url})\n\n"
                 clean_content = self._clean_article_content(article.content[:200])
-                report += f"\n\n{clean_content}{'...' if len(article.content) > 200 else ''}\n\n"
+                report += f"{clean_content}{'...' if len(article.content) > 200 else ''}\n\n"
 
         return report
 
     def _clean_article_content(self, content: str) -> str:
         """Remove all markdown headers and formatting from article content."""
         # Remove markdown headers anywhere (# ## ### etc followed by space)
-        content = re.sub(r'#{1,6}\s+', '', content)
+        content = re.sub(r"#{1,6}\s+", "", content)
         # Remove standalone * bullets
-        content = re.sub(r'^\*\s+', '', content, flags=re.MULTILINE)
+        content = re.sub(r"^\*\s+", "", content, flags=re.MULTILINE)
         return content.strip()
