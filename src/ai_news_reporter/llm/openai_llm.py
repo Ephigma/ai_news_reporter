@@ -8,6 +8,9 @@ from ..core.exceptions import LLMError
 from ..models.article import Article
 from .base import BaseLLM
 
+MAX_SUMMARY_CHARS = 800
+# A period followed by whitespace (so "3.8" is not a sentence end), or a Japanese full stop
+SENTENCE_END = re.compile(r"[.!?](?=\s)|[。！？]")
 
 DEFAULT_SUMMARY_PROMPT = """You are a professional news analyst specializing in artificial intelligence and technology.
 
@@ -128,10 +131,11 @@ class OpenAILLM(BaseLLM):
         # Keep only first paragraph (should be 2-3 sentences)
         paragraphs = [p.strip() for p in result.split("\n\n") if p.strip()]
         if paragraphs:
-            # Return only the first substantial paragraph, max 600 chars
+            # Return only the first substantial paragraph, cut at a sentence end if too long
             first = paragraphs[0]
-            if len(first) > 600:
-                first = first[:600].rsplit(".", 1)[0] + "."
+            if len(first) > MAX_SUMMARY_CHARS:
+                ends = list(SENTENCE_END.finditer(first[:MAX_SUMMARY_CHARS]))
+                first = first[: ends[-1].end()].strip() if ends else first[:MAX_SUMMARY_CHARS]
             return first
         return result
 
