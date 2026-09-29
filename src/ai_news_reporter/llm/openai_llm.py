@@ -20,6 +20,7 @@ IMPORTANT RULES:
 - Write ONLY 2-3 SHORT sentences. Be concise.
 - NO headers, NO subsections, NO bullet points, NO numbered lists.
 - Include inline source links using [Source Name](URL) format.
+- Write in {language}.
 - Example: "This week saw major advances in AI healthcare with [Utah's prescription AI initiative](url) and [OpenAI's Torch acquisition](url)."
 {focus}
 Here are the articles to analyze:
@@ -63,6 +64,7 @@ class OpenAILLM(BaseLLM):
         articles: list[Article],
         prompt: str | None = None,
         focus: str = "",
+        language: str = "English",
     ) -> str:
         """Generate a summary using OpenAI.
 
@@ -70,6 +72,7 @@ class OpenAILLM(BaseLLM):
             articles: List of articles to summarize.
             prompt: Optional custom prompt.
             focus: Optional focus instructions for the report.
+            language: Language to write in.
 
         Returns:
             Generated summary.
@@ -79,7 +82,9 @@ class OpenAILLM(BaseLLM):
 
         context = self._format_articles_for_context(articles)
         focus_text = f"\nFOCUS: {focus}\n" if focus else ""
-        full_prompt = (prompt or DEFAULT_SUMMARY_PROMPT).format(articles=context, focus=focus_text)
+        full_prompt = (prompt or DEFAULT_SUMMARY_PROMPT).format(
+            articles=context, focus=focus_text, language=language
+        )
 
         try:
             response = self._client.chat.completions.create(
@@ -146,6 +151,7 @@ class OpenAILLM(BaseLLM):
         prompt: str | None = None,
         highlight_count: int = 10,
         focus: str = "",
+        language: str = "English",
     ) -> str:
         """Generate a full report using OpenAI.
 
@@ -155,11 +161,12 @@ class OpenAILLM(BaseLLM):
             prompt: Optional custom prompt.
             highlight_count: Number of articles to feature in Highlight News.
             focus: Optional focus instructions for the report.
+            language: Language to write in.
 
         Returns:
             Generated report in markdown.
         """
-        summary = await self.summarize(articles, prompt, focus)
+        summary = await self.summarize(articles, prompt, focus, language)
 
         # Split articles into highlights and related
         highlight_articles = articles[:highlight_count]

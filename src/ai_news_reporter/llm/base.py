@@ -14,6 +14,7 @@ class BaseLLM(ABC):
         articles: list[Article],
         prompt: str | None = None,
         focus: str = "",
+        language: str = "English",
     ) -> str:
         """Generate a summary from collected articles.
 
@@ -21,6 +22,7 @@ class BaseLLM(ABC):
             articles: List of articles to summarize.
             prompt: Optional custom prompt template.
             focus: Optional focus instructions for the report.
+            language: Language to write in.
 
         Returns:
             Generated summary text.
@@ -35,6 +37,7 @@ class BaseLLM(ABC):
         prompt: str | None = None,
         highlight_count: int = 10,
         focus: str = "",
+        language: str = "English",
     ) -> str:
         """Generate a full report from collected articles.
 
@@ -44,6 +47,7 @@ class BaseLLM(ABC):
             prompt: Optional custom prompt template.
             highlight_count: Number of articles to feature in Highlight News.
             focus: Optional focus instructions for the report.
+            language: Language to write in.
 
         Returns:
             Generated report in markdown format.

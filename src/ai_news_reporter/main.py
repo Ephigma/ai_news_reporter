@@ -111,6 +111,7 @@ async def run_report_async(settings: Settings, config: AppConfig) -> None:
             recipients=config.delivery.email_recipients,
             highlight_count=config.report.highlight_count,
             focus=config.report.focus,
+            language=config.report.language,
         )
         progress.update(task, completed=True)
 
