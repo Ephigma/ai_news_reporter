@@ -137,8 +137,9 @@ search:
 
 # LLM configuration
 llm:
-  provider: "claude"        # claude, openai
-  model: "claude-sonnet-4-20250514"  # or gpt-4.1-mini for OpenAI
+  provider: "claude"        # claude, claude_code, openai
+  model: "claude-sonnet-5-5"  # or gpt-4.1-mini for OpenAI, sonnet/opus for Claude Code
+  # cli_path: "/path/to/claude"  # claude_code only: output of `which claude` (needed under cron)
   max_tokens: 4096
   temperature: 0.3
 

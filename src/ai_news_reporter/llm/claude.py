@@ -78,16 +78,17 @@ class ClaudeLLM(BaseLLM):
         focus_text = f"\nFOCUS: {focus}\n" if focus else ""
         full_prompt = (prompt or DEFAULT_SUMMARY_PROMPT).format(articles=context, focus=focus_text)
 
+        return self._clean_summary(await self._complete(full_prompt))
+
+    async def _complete(self, prompt: str) -> str:
         try:
             message = self._client.messages.create(
                 model=self._model,
                 max_tokens=self._max_tokens,
                 temperature=self._temperature,
-                messages=[{"role": "user", "content": full_prompt}],
+                messages=[{"role": "user", "content": prompt}],
             )
-            summary = message.content[0].text
-            return self._clean_summary(summary)
-
+            return message.content[0].text
         except anthropic.APIError as e:
             raise LLMError(f"Claude API error: {e}") from e
 

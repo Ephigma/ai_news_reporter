@@ -100,6 +100,7 @@ async def run_report_async(settings: Settings, config: AppConfig) -> None:
             model=config.llm.model,
             max_tokens=config.llm.max_tokens,
             temperature=config.llm.temperature,
+            cli_path=config.llm.cli_path,
         )
 
         summarizer = Summarizer(llm)

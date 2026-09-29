@@ -1,11 +1,11 @@
 # AI News Reporter
 
-Automated AI news collection and reporting system. Collects news from web scraping and Tavily search API, summarizes with LLM (Claude or OpenAI), and delivers weekly reports via email, Slack, or file output.
+Automated AI news collection and reporting system. Collects news from web scraping and Tavily search API, summarizes with LLM (Claude API, Claude account via Claude Code, or OpenAI), and delivers weekly reports via email, Slack, or file output.
 
 ## Features
 
 - **Multi-source collection**: Tavily search API + configurable web scraping
-- **Switchable LLM**: Claude (default) or OpenAI for summarization
+- **Switchable LLM**: Claude API (default), Claude account via Claude Code, or OpenAI for summarization
 - **Multiple delivery methods**: Email (SMTP), Slack webhook, File (Markdown/HTML/JSON)
 - **Scheduled reports**: Cron-style scheduling with APScheduler
 - **Deduplication**: Removes duplicate articles by URL and title similarity
@@ -40,7 +40,7 @@ For a minimal setup with file output only, you need just 2 API keys:
    TAVILY_API_KEY=tvly-xxxxx
    ```
 
-### 2. Get LLM API Key
+### 2. Choose an LLM Provider
 
 **Option A: OpenAI**
 1. Go to [platform.openai.com/api-keys](https://platform.openai.com/api-keys)
@@ -67,6 +67,21 @@ For a minimal setup with file output only, you need just 2 API keys:
    llm:
      provider: "claude"
    ```
+
+**Option C: Claude account via Claude Code (no API key)**
+
+Uses the Claude account (Pro/Max/Team/Enterprise) that [Claude Code](https://docs.claude.com/en/docs/claude-code) is logged in with, so usage counts against that account instead of API credits.
+1. Install Claude Code and log in once by running `claude`
+2. Find the executable path with `which claude`
+3. Set provider in `config/config.yaml`:
+   ```yaml
+   llm:
+     provider: "claude_code"
+     model: "sonnet"                    # or "opus"
+     cli_path: "/path/to/bin/claude"    # absolute path, since cron does not load your shell PATH
+   ```
+
+`ANTHROPIC_API_KEY` is ignored with this provider. The machine running the scheduled job must stay logged in to Claude Code.
 
 ### 3. Run Your First Report
 
@@ -160,7 +175,7 @@ delivery:
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `TAVILY_API_KEY` | Yes | Tavily API key for news search |
-| `ANTHROPIC_API_KEY` | If using Claude | Anthropic API key |
+| `ANTHROPIC_API_KEY` | If using `claude` provider | Anthropic API key |
 | `OPENAI_API_KEY` | If using OpenAI | OpenAI API key |
 | `SMTP_HOST` | If using email | SMTP server (e.g., `smtp.gmail.com`) |
 | `SMTP_PORT` | If using email | SMTP port (e.g., `587`) |
@@ -297,7 +312,7 @@ ai_news_reporter/
 │   ├── main.py           # CLI entry point
 │   ├── core/             # Config and exceptions
 │   ├── collectors/       # Tavily + web scraper
-│   ├── llm/              # Claude + OpenAI + factory
+│   ├── llm/              # Claude API + Claude Code + OpenAI + factory
 │   ├── processors/       # Summarizer + deduplicator
 │   ├── delivery/         # File, email, Slack
 │   ├── scheduler/        # APScheduler cron
