@@ -36,31 +36,6 @@ class BaseLLM(ABC):
         """
         pass
 
-    @abstractmethod
-    async def generate_report(
-        self,
-        articles: list[Article],
-        title: str,
-        prompt: str | None = None,
-        highlight_count: int = 10,
-        focus: str = "",
-        language: str = "English",
-    ) -> str:
-        """Generate a full report from collected articles.
-
-        Args:
-            articles: List of articles to include in report.
-            title: Report title.
-            prompt: Optional custom prompt template.
-            highlight_count: Number of articles to feature in Highlight News.
-            focus: Optional focus instructions for the report.
-            language: Language to write in.
-
-        Returns:
-            Generated report in markdown format.
-        """
-        pass
-
     @property
     @abstractmethod
     def provider_name(self) -> str:
