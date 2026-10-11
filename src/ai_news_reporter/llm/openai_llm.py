@@ -8,10 +8,6 @@ from ..core.exceptions import LLMError
 from ..models.article import Article
 from .base import BaseLLM
 
-MAX_SUMMARY_CHARS = 800
-# A period followed by whitespace (so "3.8" is not a sentence end), or a Japanese full stop
-SENTENCE_END = re.compile(r"[.!?](?=\s)|[。！？]")
-
 DEFAULT_SUMMARY_PROMPT = """You are a professional news analyst specializing in artificial intelligence and technology.
 
 Write a brief 2-3 sentence executive summary of the key AI developments this week.
@@ -80,10 +76,8 @@ class OpenAILLM(BaseLLM):
         if not articles:
             return "No articles to summarize."
 
-        context = self._format_articles_for_context(articles)
-        focus_text = f"\nFOCUS: {focus}\n" if focus else ""
-        full_prompt = (prompt or DEFAULT_SUMMARY_PROMPT).format(
-            articles=context, focus=focus_text, language=language
+        full_prompt = self._build_summary_prompt(
+            prompt or DEFAULT_SUMMARY_PROMPT, articles, focus, language
         )
 
         try:
@@ -137,11 +131,7 @@ class OpenAILLM(BaseLLM):
         paragraphs = [p.strip() for p in result.split("\n\n") if p.strip()]
         if paragraphs:
             # Return only the first substantial paragraph, cut at a sentence end if too long
-            first = paragraphs[0]
-            if len(first) > MAX_SUMMARY_CHARS:
-                ends = list(SENTENCE_END.finditer(first[:MAX_SUMMARY_CHARS]))
-                first = first[: ends[-1].end()].strip() if ends else first[:MAX_SUMMARY_CHARS]
-            return first
+            return self._truncate_summary(paragraphs[0])
         return result
 
     async def generate_report(

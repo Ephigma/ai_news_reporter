@@ -137,8 +137,8 @@ class ReportConfig:
         self.include_sources: bool = data.get("include_sources", True)
         self.highlight_count: int = data.get("highlight_count", 10)
         self.focus: str = data.get("focus", "")
-        # Language of all generated text (summaries)
-        self.language: str = data.get("language", "English")
+        # Language of the executive summary; headings stay English. A blank value means English.
+        self.language: str = data.get("language") or "English"
 
 
 class AppConfig:
