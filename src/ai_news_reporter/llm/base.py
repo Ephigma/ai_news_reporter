@@ -8,7 +8,8 @@ from ..models.article import Article
 MAX_SUMMARY_CHARS = 800
 # A period followed by whitespace (so "3.8" is not a sentence end), or a Japanese full stop
 SENTENCE_END = re.compile(r"[.!?](?=\s)|[。！？]")
-MARKDOWN_LINK = re.compile(r"\[[^\]]*\]\([^)]*\)")
+# [text](url); the text may contain one level of brackets, e.g. "[Foo [beta]](url)"
+MARKDOWN_LINK = re.compile(r"\[(?:[^\[\]]|\[[^\]]*\])*\]\([^)]*\)")
 
 
 class BaseLLM(ABC):

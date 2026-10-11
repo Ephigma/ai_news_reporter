@@ -60,6 +60,14 @@ class TestTruncateSummary:
         )
         assert BaseLLM._truncate_summary(text) == "First sentence."
 
+    def test_period_inside_nested_brackets_is_not_a_sentence_end(self):
+        text = (
+            "First sentence. "
+            + "a" * (MAX_SUMMARY_CHARS - 40)
+            + " [Foo [beta]. x](https://x.com/y) and more"
+        )
+        assert BaseLLM._truncate_summary(text) == "First sentence."
+
     def test_no_sentence_end_cuts_before_split_link(self):
         prefix = "a" * (MAX_SUMMARY_CHARS - 10)
         text = prefix + " [OpenAI](https://openai.com/index/some-long-path)"
