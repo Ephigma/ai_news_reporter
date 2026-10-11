@@ -12,11 +12,6 @@ class StubLLM(BaseLLM):
     async def summarize(self, articles, prompt=None, focus="", language="English"):
         return ""
 
-    async def generate_report(
-        self, articles, title, prompt=None, highlight_count=10, focus="", language="English"
-    ):
-        return ""
-
     @property
     def provider_name(self) -> str:
         return "Stub"
