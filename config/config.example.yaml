@@ -182,6 +182,7 @@ report:
   deduplicate: true
   include_sources: true
   highlight_count: 10       # Number of articles to feature in Highlight News section
+  language: "English"       # Language of the executive summary, e.g. "Japanese"
 
   # Focus instructions for the report (optional)
   # Use this to customize what topics the report should emphasize or exclude

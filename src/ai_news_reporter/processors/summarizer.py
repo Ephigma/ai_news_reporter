@@ -26,6 +26,7 @@ class Summarizer:
         recipients: list[str] | None = None,
         highlight_count: int = 10,
         focus: str = "",
+        language: str = "English",
     ) -> Report:
         """Generate a complete report from articles.
 
@@ -36,16 +37,17 @@ class Summarizer:
             recipients: Optional list of report recipients.
             highlight_count: Number of articles to feature in Highlight News.
             focus: Optional focus instructions for the report.
+            language: Language to write the report in.
 
         Returns:
             Generated Report object.
         """
         # Generate summary using LLM
-        summary = await self._llm.summarize(articles, prompt, focus)
+        summary = await self._llm.summarize(articles, prompt, focus, language)
 
         # Generate full markdown report
         content_markdown = await self._llm.generate_report(
-            articles, title, prompt, highlight_count, focus
+            articles, title, prompt, highlight_count, focus, language
         )
 
         # Generate plain text version (strip markdown)
